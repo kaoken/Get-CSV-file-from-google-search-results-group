@@ -1,0 +1,43 @@
+extends layout
+
+block content
+    div(id='app')
+        ul(class='navbar navbar-expand-lg navbar-dark bg-dark')
+            li(class='navbar-brand')
+                b 状態　
+                span(v-if="state==='run'" class="badge badge-primary") 実行中
+                span(v-else-if="state==='pause'" class="badge badge-success") 一部未取得
+                span(v-else-if="state==='end'" class="badge badge-success") 取得終了
+                span(v-if="state==='none'||state==='end'||state==''" class="badge badge-light") 解析可能
+        div(class='container')
+            b-collapse(id="keywordFileForm" v-bind:visible="state!=='run'")
+                form(class="was-validated")
+                    h1 キーファイル
+                    b-form-file(accept=".txt" choose-label="ファイル" @change='onFileChange' invalide)
+            hr
+            b-collapse(id="downloadCSVFile" v-bind:visible="existCSV && state!=='run'")
+                b-button(@click="onDownloadCSVFile" variant="success")
+                    i(class="fa fa-download" aria-hidden="true")
+                    span  CSVファイルのダウンロード {{ ctimeCSV | moment("YYYY年MM月DD日(ddd) HH:mm:ss")}}
+                hr
+            b-collapse(id="" v-bind:visible="isRestart")
+                b-button(@click="onPauseRestart" variant="warning")
+                    i(class="fa fa-refresh" aria-hidden="true")
+                    span  再開する
+                hr
+            b-collapse(id="progress" v-bind:visible="state==='run' || items.length>0")
+                b-progress(v-show="state==='run'" height="20px" v-bind:value="finished/items.length*100" show-progress class="mb-2")
+                table(class="table table-striped table-sm")
+                    thead(class="thead-dark")
+                        tr
+                            th(scope="col") #
+                            th(scope="col") キーワード
+                            th(scope="col" class="text-right") 件数
+                    tbody
+                        tr(v-for="(item, index) in items")
+                            th(scope="row") {{ index+1 }}
+                            td {{ item.keyword }}
+                            td(class="text-right")
+                                span(v-if="item.result==-1")
+                                    b-progress(v-bind:value="100" animated)
+                                span(v-else) {{ item.result | currency('',0) }} 件
