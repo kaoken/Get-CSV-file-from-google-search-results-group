@@ -15,3 +15,9 @@
 @import "~bootstrap-vue/dist/bootstrap-vue.css";
 
 @import "site/site";
+
+
+/* Japanese language */
+.custom-file-label:lang(ja)::after {
+  content : "検索";
+}

@@ -7,6 +7,15 @@ const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
 var socketServer;
 const client = require('cheerio-httpcli');
 
+/**
+ * 待機する
+ * @param {int} milliSecond ミリ秒
+ */
+async function wait(milliSecond) {
+    await sleep(milliSecond);
+}
+
+// SSL 接続か？
 if(env.server.https.valid){
     socketServer = require('https').createServer({
         key:  fs.readFileSync(env.server.https.key).toString(),
@@ -27,7 +36,9 @@ const io = require('socket.io')(socketServer,{
 });
 socketServer.listen(env.server.socketPort);
 
-
+/**
+ *
+ */
 class ClientSocket
 {
     static isExistFile(file) {
@@ -261,22 +272,41 @@ class SocketMgr
                 io.emit('run',a);
                 self.state = 'run';
 
-                a.items.forEach(function(v,i){
-                    if(v.result != -1){++itemCnt;return;}
-
-                    client.fetch('https://www.google.com/search', { q: v.keyword }, (err, $, res, body)=> {
-                        ++itemCnt;
-                        if(err) return;
-                        let n = $('#resultStats').text().match(/[0-9,]+/)[0].replace(/,/g,'');
-                        io.emit('result',{
-                            state:'result',
-                            item:{keyword:v.keyword,result:n,endDate:new Date()}
+                (async () => {
+                    for(itemCnt=0;itemCnt<a.items.length;++itemCnt){
+                        let v = a.items[itemCnt];
+                        let run = true;
+                        if(v.result != -1)continue;
+                        console.log("検索開始 No."+itemCnt+" キーワード: \u001b[32m"+v.keyword+"\u001b[0m");
+                        client.reset();
+                        client.fetch('https://www.google.com/search', { q: v.keyword }, (err, $, res, body)=> {
+                            run = false;
+                            if(err){
+                                console.log("\u001b[31m"+err.message+"\u001b[0m");
+                                return;
+                            }
+                            let aMatch = $('#resultStats').text().match(/[0-9,]+/);
+                            let n = -2;
+                            if( Array.isArray(aMatch) && aMatch.length > 0){
+                                n = parseInt(aMatch[0].replace(/,/g,''),10);
+                            }
+                            io.emit('result',{
+                                state:'result',
+                                item:{idx:itemCnt,keyword:v.keyword,result:n,endDate:new Date()}
+                            });
+                            v.result = n;
+                            v.endDate = new Date();
+                            if( n == -2 )
+                                console.log("\u001b[31mページに件数が存在しない\u001b[0m");
+                            else
+                                console.log(n.toLocaleString() + " 件");
                         });
-                        a.items[i].result = n;
-                        a.items[i].endDate = new Date();
-                        console.log($('title').text() + ' ' + n);
-                    });
-                });
+                        do{ await sleep(100); }while(run);
+                        if(itemCnt<a.items.length-1)
+                            await sleep(env.searchInterval);
+                    }
+                })();
+
                 (async () => {
                     do{
                         await sleep(100);
@@ -298,9 +328,9 @@ class SocketMgr
                                 }
                                 createCSVFile(a);
                             }catch (e){
-                                let err =e.message;
+                                console.log(e);
+                                let err =e.message||e;
                                 log.request.error(err);
-                                console.log(err);
                                 io.emit('error',{ state:'err', text:err });
                                 //-----------------------------------------------
                                 self.state = 'pause';

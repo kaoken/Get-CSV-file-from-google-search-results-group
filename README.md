@@ -1,6 +1,6 @@
 # Google検索、件数取得
 [![Travis](https://img.shields.io/travis/rust-lang/rust.svg)](https://github.com/kaoken/Get-CSV-file-from-google-search-results-group)
-[![version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/kaoken/Get-CSV-file-from-google-search-results-group)
+[![version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/kaoken/Get-CSV-file-from-google-search-results-group)
 [![version](https://img.shields.io/badge/npm-5.5.1-blue.svg)](https://github.com/kaoken/Get-CSV-file-from-google-search-results-group)  
 Google検索で、複数ある対象キーワード群から件数のみを取得し、CSVファイルに変化するWEBアプリである
 
@@ -30,6 +30,52 @@ npm install
 ```bash
 npm run dev
 ```
+  
+## コンフィグ
+`env.json`ファイルがコンフィグファイルである。
+```js
+{
+  "server":{
+    "port":3000,
+    "socketPort":3001,
+    "https":{
+      "valid":false,
+      "key":"D:/www/nodejs/google_keyword_hit_count_csv/resources/ssl/server.key",
+      "cert":"D:/www/nodejs/google_keyword_hit_count_csv/resources/ssl/server.crt"
+    },
+    "serverWebID":"90-pweutrvvcw*PLi"
+  },
+  "auth":
+  {
+    "valid":false,
+    "username":"admin",
+    "password":"pass"
+  },
+  "maxKeyword":1000,
+  "searchInterval":10000,
+  "dir":{
+    "tmp":"storage/tmp/"
+  },
+  "filePath":{
+    "CSV":"storage/tmp/keyword_result.CSV",
+    "keyword":"storage/tmp/keyword.txt",
+    "run":"storage/tmp/run.json"
+  },
+  "file":{
+    "CSV":"keyword_result.CSV"
+  }
+}
+```
+### 最大キー数 
+`maxKeyword`は、一度に検索することのできる最大キー数である。
+  
+### キーの検索間隔
+`searchInterval`は、一つのキーを検索する毎に待つ時間である。単位はミリセコンドで、1000で一秒を表す。  
+デフォルトでは、5秒間隔である。
+
+### 他のパラメーター
+上記以外の値を偏向することは、今のところおすすめしない。コードを読んで理解できる方はどうぞ。
+
   
 # 起動
 サーバを起動するためのコマンド

@@ -13,7 +13,9 @@ block content
             b-collapse(id="keywordFileForm" v-bind:visible="state!=='run'")
                 form(class="was-validated")
                     h1 キーファイル
-                    b-form-file(accept=".txt" choose-label="ファイル" @change='onFileChange' invalide)
+                    div(class="custom-file")
+                        input(type="file" class="custom-file-input" id="validatedCustomFile" @change='onFileChange' required)
+                        label(class="custom-file-label" for="validatedCustomFile") 選択ファイル...
             hr
             b-collapse(id="downloadCSVFile" v-bind:visible="existCSV && state!=='run'")
                 b-button(@click="onDownloadCSVFile" variant="success")
@@ -40,4 +42,6 @@ block content
                             td(class="text-right")
                                 span(v-if="item.result==-1")
                                     b-progress(v-bind:value="100" animated)
+                                span(v-else-if="item.result==-2")
+                                    span(class="text-danger") ページに件数が存在しない。
                                 span(v-else) {{ item.result | currency('',0) }} 件

@@ -72,14 +72,13 @@ const app = new Vue({
             console.log('run from browser.',data);
         });
         Echo.on('result', function(data){
-            self.finished++;
-            self.isRestart=false;
-            for(let i=0;i<self.items.length;++i){
-                if(self.items[i].keyword === data.item.keyword){
-                    self.items[i].result = data.item.result;
-                    self.items[i].endDate = new Date(data.item.endDate);
-                    break;
-                }
+            if( data.item !== undefined && data.item.idx <= self.items.length && data.item.idx >= 0)
+            {
+                self.finished++;
+                self.isRestart=false;
+                let v = self.items[data.item.idx];
+                v.result = data.item.result;
+                v.endDate = new Date(data.item.endDate);
             }
             //console.log('result from browser.',data);
         });
