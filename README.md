@@ -52,7 +52,7 @@ npm run dev
     "password":"pass"
   },
   "maxKeyword":1000,
-  "searchInterval":10000,
+  "searchInterval":5000,
   "dir":{
     "tmp":"storage/tmp/"
   },
