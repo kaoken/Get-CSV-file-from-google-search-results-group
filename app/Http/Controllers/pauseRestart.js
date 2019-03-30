@@ -6,7 +6,7 @@ const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
 module.exports = class PauseRestart
 {
     /**
-     *
+     * コンストラクタ
      * @param req
      * @param res
      * @param {socket} socket

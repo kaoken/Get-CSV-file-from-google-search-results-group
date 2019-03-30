@@ -229,7 +229,7 @@ class SocketMgr
             let newItems = [];
             Object.assign(newItems , a.items);
             csvStringify(newItems,{ delimiter: ',',quote:'"',quoted:true,quotedString:true },(_err, output) => {
-                fs.writeFile(env.filePath.CSV,output,function(err){
+                fs.writeFile(env.filePath.CSV, output, function(err){
                     if(err){
                         log.request.error("CSV ファイル作成に失敗."+err.message);
                         io.emit('error',{
@@ -253,6 +253,8 @@ class SocketMgr
          *
          */
         let runJsonReadFile = function () {
+            const TITLE_MAX = 10;
+
             fs.readFile(env.filePath.run, 'utf8', (err, text)=> {
                 if(err){
                     log.request.error("キーワード処理 ファイル読み込みに失敗");
@@ -279,12 +281,46 @@ class SocketMgr
                         if(v.result != -1)continue;
                         console.log("検索開始 No."+itemCnt+" キーワード: \u001b[32m"+v.keyword+"\u001b[0m");
                         client.reset();
-                        client.fetch('https://www.google.com/search', { q: v.keyword }, (err, $, res, body)=> {
+                        client.fetch('https://www.google.com/search', { q: v.keyword, num:TITLE_MAX }, (err, $, res, body)=> {
                             run = false;
                             if(err){
                                 console.log("\u001b[31m"+err.message+"\u001b[0m");
                                 return;
                             }
+                            //----------------------------------------------
+                            // タイトルを取得
+                            //----------------------------------------------
+                            let aKey = [];
+                            v.keyword.split(/\s+/).forEach( function( value ) {
+                                if(value === ' ' || value === '')return;
+                                aKey.push(value);
+                            });
+
+                            let aTitle = [];
+                            let titleIdx = 0;
+                            for(let i=0;i<TITLE_MAX;++i)aTitle.push('');
+                            $("div.r").each(function(index, element){
+                                if(titleIdx >= TITLE_MAX)return true;
+
+                                const title = $(element).find("h3").text();
+                                let matchCount = 0;
+                                for( let i=0; i<aKey.length; ++i){
+                                    let titleRegex = new RegExp(aKey[i]);
+                                    if(title.match(titleRegex) === null){
+                                        break;
+                                    }
+                                    matchCount++;
+                                }
+                                if( matchCount !== aKey.length){
+                                    return true;
+                                }
+                                aTitle[titleIdx++] = $(element).find("h3").text();
+                            });
+                            // 空タイトル追加
+
+                            //----------------------------------------------
+                            // 表示件数の取得
+                            //----------------------------------------------
                             let aMatch = $('#resultStats').text().match(/[0-9,]+/);
                             let n = -2;
                             if( Array.isArray(aMatch) && aMatch.length > 0){
@@ -295,11 +331,19 @@ class SocketMgr
                                 item:{idx:itemCnt,keyword:v.keyword,result:n,endDate:new Date()}
                             });
                             v.result = n;
+                            for(let i=0;i<TITLE_MAX;++i) {
+                                v["title" + i] = aTitle[i];
+                            }
                             v.endDate = new Date();
                             if( n == -2 )
                                 console.log("\u001b[31mページに件数が存在しない\u001b[0m");
-                            else
+                            else{
                                 console.log(n.toLocaleString() + " 件");
+                                for(let i=0;i<aTitle.length;++i){
+                                    if(aTitle[i] === "")break;
+                                    console.log(i + " : " + aTitle[i]);
+                                };
+                            }
                         });
                         do{ await sleep(100); }while(run);
                         if(itemCnt<a.items.length-1)
