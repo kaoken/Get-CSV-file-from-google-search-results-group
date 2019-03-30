@@ -1,6 +1,6 @@
 # Google検索、件数取得
 [![Travis](https://img.shields.io/travis/rust-lang/rust.svg)](https://github.com/kaoken/Get-CSV-file-from-google-search-results-group)
-[![version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/kaoken/Get-CSV-file-from-google-search-results-group)
+[![version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/kaoken/Get-CSV-file-from-google-search-results-group)
 [![version](https://img.shields.io/badge/npm-5.5.1-blue.svg)](https://github.com/kaoken/Get-CSV-file-from-google-search-results-group)  
 Google検索で、複数ある対象キーワード群から件数のみを取得し、CSVファイルに変化するWEBアプリである
 
@@ -95,7 +95,7 @@ npm start
 マグネット 磁石
 ```
 
-として、検索したいキーワードごとに改行する。  
+として、検索したいキーワードごとに改行する。  スペースがAND検索になる
 
 注意：ファイルフォーマットは必ず **`UTF8`** にすること！！
 
