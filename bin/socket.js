@@ -316,7 +316,6 @@ class SocketMgr
                                 }
                                 aTitle[titleIdx++] = $(element).find("h3").text();
                             });
-                            // 空タイトル追加
 
                             //----------------------------------------------
                             // 表示件数の取得
@@ -328,9 +327,10 @@ class SocketMgr
                             }
                             io.emit('result',{
                                 state:'result',
-                                item:{idx:itemCnt,keyword:v.keyword,result:n,endDate:new Date()}
+                                item:{idx:itemCnt,keyword:v.keyword,result:n,titleCount:titleIdx,titles:aTitle,endDate:new Date()}
                             });
                             v.result = n;
+                            v.titleCount = titleIdx;
                             for(let i=0;i<TITLE_MAX;++i) {
                                 v["title" + i] = aTitle[i];
                             }
@@ -342,7 +342,7 @@ class SocketMgr
                                 for(let i=0;i<aTitle.length;++i){
                                     if(aTitle[i] === "")break;
                                     console.log(i + " : " + aTitle[i]);
-                                };
+                                }
                             }
                         });
                         do{ await sleep(100); }while(run);

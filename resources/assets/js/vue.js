@@ -22,12 +22,12 @@ Vue.use(require('bootstrap-vue'));
 /**
  * Vue Toastr
  */
-import VueToastr from '@deveodk/vue-toastr'
+import VueToastr from '@deveodk/vue-toastr';
 Vue.use(VueToastr, {
     defaultPosition: 'toast-top-right',
 });
 
 Vue.use(require('vue-moment'));
 
-import Vue2Filters from 'vue2-filters'
+import Vue2Filters from 'vue2-filters';
 Vue.use(Vue2Filters);

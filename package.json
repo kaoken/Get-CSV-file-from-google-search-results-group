@@ -1,6 +1,6 @@
 {
   "name": "google-keyword-hit-count-csv",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -13,23 +13,25 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "axios": "^0.16.2",
+    "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "cheerio-httpcli": "^0.7.4",
     "cookie-parser": "^1.4.4",
     "cross-env": "^5.2.0",
     "csurf": "^1.9.0",
     "csv-stringify": "^2.1.0",
-    "debug": "~2.6.9",
-    "express": "~4.15.5",
+    "debug": "~4.1.1",
+    "express": "~4.16.4",
     "http-auth": "^3.2.3",
     "jade": "~1.11.0",
     "jquery": "^3.3.1",
-    "laravel-mix": "^1.6.1",
+    "laravel-mix": "^4.0.15",
     "lodash": "^4.17.11",
-    "log4js": "^2.11.0",
+    "log4js": "^4.1.0",
     "morgan": "^1.9.1",
     "multer": "^1.4.1",
+    "sass": "^1.17.3",
+    "sass-loader": "^7.1.0",
     "serve-favicon": "~2.4.5",
     "vue": "^2.6.10"
   },
@@ -38,15 +40,16 @@
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^1.5.1",
     "font-awesome": "^4.7.0",
-    "font-awesome-animation": "0.0.10",
-    "ionicons": "^3.0.0",
+    "font-awesome-animation": "0.2.1",
+    "ionicons": "^4.5.5",
     "moment": "^2.24.0",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
     "tether": "^1.4.5",
+    "vue-template-compiler": "^2.6.10",
     "vee-validate": "^2.2.0",
-    "vue-moment": "^3.2.0",
-    "vue-router": "^2.8.1",
-    "vue2-filters": "^0.2.2"
+    "vue-moment": "^4.0.0",
+    "vue-router": "^3.0.2",
+    "vue2-filters": "^0.6.0"
   }
 }

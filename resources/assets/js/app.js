@@ -1,6 +1,6 @@
 window.util = require("./util/util").default;
 window.moment = require("moment");
-var momentja = require('moment/locale/ja'); // browserifyでライブラリを読み込ませるのに必要
+let momentja = require('moment/locale/ja'); // browserifyでライブラリを読み込ませるのに必要
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -21,7 +21,7 @@ require('./vue.js');
 const app = new Vue({
     el: '#app',
     created:function(){
-        var self = this;
+        let self = this;
         Echo.on('connect', function(){
             console.log('Connect from browser.');
             Echo.emit('state');
@@ -77,8 +77,9 @@ const app = new Vue({
                 self.finished++;
                 self.isRestart=false;
                 let v = self.items[data.item.idx];
-                v.result = data.item.result;
-                v.endDate = new Date(data.item.endDate);
+                v.result        = data.item.result;
+                v.titleCount    = data.item.titleCount;
+                v.endDate       = new Date(data.item.endDate);
             }
             //console.log('result from browser.',data);
         });
