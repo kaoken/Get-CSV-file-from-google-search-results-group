@@ -39,7 +39,9 @@ block content
                     tbody
                         tr(v-for="(item, index) in items")
                             th(scope="row") {{ index+1 }}
-                            td {{ item.keyword }}
+                            td
+                                a(v-bind:href="item.searchURL" target="_blank")
+                                    {{ item.keyword }}
                             td(class="text-right")
                                 span(v-if="item.result==-1")
                                     b-progress(v-bind:value="100" animated)

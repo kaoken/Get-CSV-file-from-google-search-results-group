@@ -4,8 +4,9 @@ const fs = require("fs");
 const csvStringify = require('csv-stringify');
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
 
-var socketServer;
+let socketServer;
 const client = require('cheerio-httpcli');
+const jaconv = require('jaconv');
 
 /**
  * 待機する
@@ -169,6 +170,8 @@ class SocketMgr
                 let a = JSON.parse(text);
                 let isPause=false;
                 for(let i=0;i<a.items.length;++i){
+
+                    a.items[i].keywordEnc    = encodeURI( a.items[i].keyword );
                     if( a.items[i].result == -1){
                         isPause=true;
                         break;
@@ -218,6 +221,28 @@ class SocketMgr
             io.emit('error',{ state:'err', text:err });
             return;
         }
+        /**
+         * 指定した文言を大文字かつ大文字に変換する
+         * @param {String} txt
+         * @return
+         */
+        let convertText = function(txt){
+            //------------------------
+            // 大文字変換
+            //------------------------
+            txt = txt.toUpperCase();
+            //------------------------
+            // 半角を全角変換
+            //------------------------
+            // 半角カタカナを全角カタカナに変換
+            txt = jaconv.toZenKana(txt);
+            // 全角カタカナを全角ひらがなに変換
+            txt = jaconv.toHiragana(txt);
+            // 全角ひらがなをヘボン式ローマ字で半角英文字に変換
+            txt = jaconv.toHebon(txt);
+            return txt;
+        };
+
         /**
          * CSVファイルの作成
          * @param a
@@ -281,7 +306,7 @@ class SocketMgr
                         if(v.result != -1)continue;
                         console.log("検索開始 No."+itemCnt+" キーワード: \u001b[32m"+v.keyword+"\u001b[0m");
                         client.reset();
-                        client.fetch('https://www.google.com/search', { q: v.keyword, num:TITLE_MAX }, (err, $, res, body)=> {
+                        client.fetch('https://www.google.com/search', { q: v.keyword}, (err, $, res, body)=> {
                             run = false;
                             if(err){
                                 console.log("\u001b[31m"+err.message+"\u001b[0m");
@@ -293,7 +318,8 @@ class SocketMgr
                             let aKey = [];
                             v.keyword.split(/\s+/).forEach( function( value ) {
                                 if(value === ' ' || value === '')return;
-                                aKey.push(value);
+
+                                aKey.push(convertText(value));
                             });
 
                             let aTitle = [];
@@ -302,7 +328,7 @@ class SocketMgr
                             $("div.r").each(function(index, element){
                                 if(titleIdx >= TITLE_MAX)return true;
 
-                                const title = $(element).find("h3").text();
+                                const title = convertText($(element).find("h3").text());
                                 let matchCount = 0;
                                 for( let i=0; i<aKey.length; ++i){
                                     let titleRegex = new RegExp(aKey[i]);

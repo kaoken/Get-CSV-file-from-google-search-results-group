@@ -1,6 +1,7 @@
 window.util = require("./util/util").default;
 window.moment = require("moment");
 let momentja = require('moment/locale/ja'); // browserifyでライブラリを読み込ませるのに必要
+require('jaconv/lib/jaconv.js');
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -51,6 +52,9 @@ const app = new Vue({
             }else{
                 self.state = e.state;
                 self.items = e.items||[];
+                for(let i=0;self.items.length;++i){
+                    self.items[i].searchURL = "https://www.google.com/search?q=" + encodeURI( self.items[i].keyword );
+                }
             }
             self.existCSV=e.existCSV;
             self.ctimeCSV=e.ctimeCSV!==null?new Date(e.ctimeCSV):null;
@@ -79,6 +83,7 @@ const app = new Vue({
                 let v = self.items[data.item.idx];
                 v.result        = data.item.result;
                 v.titleCount    = data.item.titleCount;
+                v.searchURL    = "https://www.google.com/search?q=" + encodeURI( v.keyword );
                 v.endDate       = new Date(data.item.endDate);
             }
             //console.log('result from browser.',data);

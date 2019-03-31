@@ -33,7 +33,8 @@
     "sass": "^1.17.3",
     "sass-loader": "^7.1.0",
     "serve-favicon": "~2.4.5",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "jaconv": "^1.0.4"
   },
   "dependencies": {
     "@deveodk/vue-toastr": "^1.0.4",
