@@ -23,6 +23,24 @@ const app = new Vue({
     el: '#app',
     created:function(){
         let self = this;
+
+        /**
+         * 検索用URLを追加する
+         * @param item
+         */
+        let createKeyWordURL = function(item){
+            item.searchURL = "https://www.google.com/search?q=" + encodeURI( item.keyword );
+        };
+        /**
+         * 検索用URLを追加する
+         * @param items
+         */
+        let createMultiKeyWordURL = function(items){
+            for(let i=0;i<items.length;++i){
+                createKeyWordURL(items[i]);
+            }
+        };
+
         Echo.on('connect', function(){
             console.log('Connect from browser.');
             Echo.emit('state');
@@ -52,9 +70,7 @@ const app = new Vue({
             }else{
                 self.state = e.state;
                 self.items = e.items||[];
-                for(let i=0;self.items.length;++i){
-                    self.items[i].searchURL = "https://www.google.com/search?q=" + encodeURI( self.items[i].keyword );
-                }
+                createMultiKeyWordURL(self.items);
             }
             self.existCSV=e.existCSV;
             self.ctimeCSV=e.ctimeCSV!==null?new Date(e.ctimeCSV):null;
@@ -81,9 +97,9 @@ const app = new Vue({
                 self.finished++;
                 self.isRestart=false;
                 let v = self.items[data.item.idx];
+                createKeyWordURL(v);
                 v.result        = data.item.result;
                 v.titleCount    = data.item.titleCount;
-                v.searchURL    = "https://www.google.com/search?q=" + encodeURI( v.keyword );
                 v.endDate       = new Date(data.item.endDate);
             }
             //console.log('result from browser.',data);
@@ -94,6 +110,7 @@ const app = new Vue({
             self.finished = data.items.length;
             self.existCSV = data.existCSV;
             self.ctimeCSV = new Date(data.ctimeCSV);
+            createMultiKeyWordURL(self.items);
 
             self.$toastr('success', {
                 title: '',
